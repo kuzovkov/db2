@@ -1,0 +1,62 @@
+body
+{
+	font-family: Verdana;
+	color: #333;
+}
+
+table, td, tr
+{
+	border: 1px solid #333;
+}
+
+th
+{
+	background-color: #ff9900;
+	padding: 10px;
+	text-align: center;
+}
+
+td
+{
+	background-color: #ccc;
+	padding: 10px;
+	text-align: center;
+}
+
+.table
+{
+	float: left;
+	margin-left: 20px;
+}
+
+.error
+{
+	color: #f00;
+}
+
+.cls
+{
+	clear: both;
+}
+
+textarea
+{
+	font-size: 20px;
+	
+}
+
+label
+{
+	font-size: 36px;
+	margin-right: 10px;
+}
+
+button, select
+{
+	font-size: 36px;
+}
+
+h1 span
+{
+	color: #369;
+}
