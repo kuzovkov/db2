@@ -24,26 +24,22 @@ $('#filter').change(function(){
     reloadPage();    
 });
 
-$('#filter-point-dep').change(function(){
+$('#filter1').change(function(){
     search = ($('#filter').prop('checked'))? true:false;
     if ( search ) reloadPage(); 
     
 });
 
-$('#filter-point-arr').change(function(){
+$('#filter2').change(function(){
     search = ($('#filter').prop('checked'))? true:false;
     if ( search ) reloadPage(); 
 });
 
 function reloadPage(){
     
-    if ( search ){
-        args.filter1 = $('#filter-point-dep').val();
-        args.filter2 = $('#filter-point-arr').val();
-        args.search = search; 
-    }else{
-        delete args.filter1;
-        delete args.filter2;
-    }
+    args.filter1 = $('#filter1').val();
+    args.filter2 = $('#filter2').val();
+    args.search = search; 
+   
     $('#data').load('modules/flight.php',args);
 }

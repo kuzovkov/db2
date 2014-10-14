@@ -91,5 +91,17 @@ $array1 = dbGetQueryResult($sql);
     foreach($array1 as $row1) if ( $row1['id'] == $id ) $foto = $row1['foto'];
     $src = ($foto != '')? 'thumbnail.80.'.$foto : 'default.gif';
 ?>
-
 <img class="foto" src="img/foto/<?=$src?>"/>
+</table>
+<table class="table">
+<tr>
+<td>
+<label>Имя</label>&nbsp;
+<input type="text" id="filter-point-dep" value="<?=(isset($_POST['filter1']))? $_POST['filter1']: ''?>" size="50"/>&nbsp;&nbsp;
+<label>Фамилия</label>&nbsp;
+<input type="text" id="filter-point-arr" value="<?=(isset($_POST['filter2']))? $_POST['filter2']: ''?>" size="50"/>&nbsp;&nbsp;
+<label>Включить фильтр</label>&nbsp;
+<input type="checkbox" id="filter" <?php if($_POST['search']):?>checked="checked"/><?php endif;?>
+</td>
+</tr>
+</table>

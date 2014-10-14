@@ -1,12 +1,12 @@
 <?php
 require_once('common.inc.php');
-
+//var_dump($_POST);
 $id = ( isset( $_POST['id']) )? $_POST['id'] : 0;
 $trend1 = ( isset( $_POST['trend1'] ) )? $_POST['trend1'] : 'ASC';
 $trend2 = ( isset( $_POST['trend2'] ) )? $_POST['trend2'] : 'ASC';
 $field2 = ( isset($_POST['field2']))? $_POST['field2'] : 'id';
 $field1 = ( isset($_POST['field1']))? $_POST['field1'] : 'id';
-$search = ( isset($_POST['search']) && $_POST['search']==true )? true : false;
+$search = ( isset($_POST['search']) && $_POST['search'] === 'true' )? true : false;
 $filter1 = ( isset($_POST['filter1']))? $_POST['filter1'] : false;
 $filter2 = ( isset($_POST['filter2']))? $_POST['filter2'] : false;
 
@@ -111,11 +111,12 @@ $array1 = dbGetQueryResult($sql);
 <tr>
 <td>
 <label>Пункт вылета</label>&nbsp;
-<input type="text" id="filter-point-dep" value="<?=(isset($_POST['filter1']))? $_POST['filter1']: ''?>" size="50"/>&nbsp;&nbsp;
+<input type="text" id="filter1" value="<?=(isset($_POST['filter1']))? $_POST['filter1']: ''?>" size="50"/>&nbsp;&nbsp;
 <label>Пункт прилета</label>&nbsp;
-<input type="text" id="filter-point-arr" value="<?=(isset($_POST['filter2']))? $_POST['filter2']: ''?>" size="50"/>&nbsp;&nbsp;
+<input type="text" id="filter2" value="<?=(isset($_POST['filter2']))? $_POST['filter2']: ''?>" size="50"/>&nbsp;&nbsp;
 <label>Включить фильтр</label>&nbsp;
-<input type="checkbox" id="filter" <?php if($_POST['search']):?>checked="checked"/><?php endif;?>
+ 
+<input type="checkbox" id="filter" <?php if($search):?>checked="checked"<?php endif;?>/>
 </td>
 </tr>
 </table>
