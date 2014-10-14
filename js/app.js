@@ -1,5 +1,4 @@
-switchMenu('flight');
-    
+   
 $('.menu').click(function(){
     menuId = this.id;
    switchMenu(menuId);

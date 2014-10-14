@@ -1,6 +1,5 @@
 <?php
-
-require_once('db.func.php');
+require_once('common.inc.php');
 
 $id = ( isset( $_POST['id']) )? $_POST['id'] : 0;
 $trend1 = ( isset( $_POST['trend1'] ) )? $_POST['trend1'] : 'ASC';
@@ -28,8 +27,10 @@ $array1 = dbGetQueryResult($sql);
 
 <?php foreach ( $array1 as $row1 ): if ( $id == 0 ) $id = $row1['id'];?>
     <tr <?php if($row1['id'] == $id) echo 'class="active tbody"'; else echo 'class="tbody"';?> id="<?=$row1['id']?>">
+    
     <?php foreach ( $row1 as $key => $col ): ?>
-        <?php if($key != 'id' ):?><td key="<?=$key?>"><?=$col?></td><?php endif;?>
+        <?php if(!in_array($key,$hidden)):?><td key="<?=$key?>"><?=$col?>
+        </td><?php endif;?>
     <?php endforeach;?>
     </tr>
 <?php endforeach;?>
@@ -37,6 +38,7 @@ $array1 = dbGetQueryResult($sql);
 </table>
 </div>
 </td>
+<script src="js/foto.js"></script>
 <script type="text/javascript">
     var trend1 = '<?=$trend1?>';
     var trend2 = '<?=$trend2?>';
@@ -75,7 +77,7 @@ $array1 = dbGetQueryResult($sql);
 <?php foreach ( $array2 as $row2 ): ?>
     <tr>
     <?php foreach ( $row2 as $key => $col ): ?>
-        <?php if($key != 'id' ):?><td key="<?=$key?>"><?=$col?></td><?php endif;?>
+        <?php if(!in_array($key,$hidden)):?><td key="<?=$key?>"><?=$col?></td><?php endif;?>
     <?php endforeach;?>
     </tr>
 <?php endforeach;?>
@@ -84,3 +86,10 @@ $array1 = dbGetQueryResult($sql);
 </td>
 </tr>
 </table>
+<h3>Фотография</h3>
+<?php 
+    foreach($array1 as $row1) if ( $row1['id'] == $id ) $foto = $row1['foto'];
+    $src = ($foto != '')? 'thumbnail.80.'.$foto : 'default.gif';
+?>
+
+<img class="foto" src="img/foto/<?=$src?>"/>

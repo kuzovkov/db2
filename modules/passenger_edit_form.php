@@ -87,6 +87,37 @@
     </td>
 </tr>
 </table>
+<?php if ( isset($_POST['id']) ): ?> 
+<table class="table">
+<tr>
+<td>
+
+<h3>Фотография</h3>
+<img width="80" height="80" src="<?=(isset($_POST['foto']) && ( $_POST['foto'] != ''))? 'img/foto/thumbnail.80.' . $_POST['foto'] : 'img/foto/default.gif'?>" />
+</td>
+<td>
+<h3>Загрузите фотографию</h3>
+<form method="post" action="modules/upload.php" enctype="multipart/form-data">
+    <input type="file" name="img"/>
+    <?php foreach( $_POST as $key => $val ):?>
+        <input type="hidden" name="<?=$key?>" value="<?=$val?>" />
+    <?php endforeach; ?>
+    <input type="hidden" name="op" value="upload"/>
+    <button>Загрузить</button>
+</form>
+<form method="post" action="modules/upload.php" enctype="multipart/form-data">
+    <?php foreach( $_POST as $key => $val ):?>
+        <input type="hidden" name="<?=$key?>" value="<?=$val?>" />
+    <?php endforeach; ?>
+    <input type="hidden" name="op" value="delete"/>
+    <button>Удалить</button>
+</form>
+
+</td>
+</tr>
+</table>
+<?php endif; ?>
+
 </div>
 
 

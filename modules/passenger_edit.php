@@ -1,6 +1,5 @@
 <?php
-
-require_once('db.func.php');
+require_once('common.inc.php');
 
 $id = ( isset( $_POST['id']) )? $_POST['id'] : 0;
 $currRow = null;
@@ -65,7 +64,7 @@ $array1 = dbGetQueryResult($sql);
 <?php foreach ( $array1 as $row1 ): if ( $id == 0 ) $id = $row1['id'];?>
     <tr <?php if($row1['id'] == $id) { echo 'class="active tbody"'; $currRow = $row1; }else {echo 'class="tbody"';}?> id="<?=$row1['id']?>">
     <?php foreach ( $row1 as $key => $col ): ?>
-        <?php if($key != 'id'):?><td key="<?=$key?>"><?=$col?></td><?php endif; ?>
+        <?php if(!in_array($key,$hidden)):?><td key="<?=$key?>"><?=$col?></td><?php endif; ?>
     <?php endforeach;?>
     </tr>
 <?php endforeach;?>

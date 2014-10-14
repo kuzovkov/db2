@@ -1,6 +1,5 @@
 <?php
-
-    require_once('db.func.php');
+    require_once('common.inc.php');
     
     $idFlight = ( isset($_POST['idFlight']) )? $_POST['idFlight'] : 0;
     $idPassenger = ( isset($_POST['idPassenger']) )? $_POST['idPassenger'] : 0;
@@ -28,7 +27,7 @@
     <?php foreach ( $array1 as $row1 ): if ( $idPassenger == 0 ) $idPassenger = $row1['id'];?>
         <tr>
         <?php foreach ( $row1 as $key => $col ): ?>
-            <?php if($key != 'id'):?><td key="<?=$key?>"><?=$col?></td><?php endif;?>
+            <?php if(!in_array($key,$hidden)):?><td key="<?=$key?>"><?=$col?></td><?php endif;?>
         <?php endforeach;?>
         </tr>
     <?php endforeach;?>
@@ -75,7 +74,7 @@
 <?php foreach ( $array2 as $row2 ): if ( $idFlight == 0 ) $idFlight = $row2['id'];?>
     <tr <?php if($row2['id'] == $idFlight) echo 'class="active"';?> id="<?=$row2['id']?>">
     <?php foreach ( $row2 as $key => $col ): ?>
-        <?php if($key != 'id' && $key != 'place'):?><td key="<?=$key?>"><?=$col?></td><?php endif;?>
+        <?php if(!in_array($key,$hidden2)):?><td key="<?=$key?>"><?=$col?></td><?php endif;?>
     <?php endforeach;?>
     </tr>
 <?php endforeach;?>

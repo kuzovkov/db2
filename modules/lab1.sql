@@ -66,6 +66,7 @@ CREATE TABLE IF NOT EXISTS `passenger` (
   `sex` ENUM ('муж','жен') NOT NULL DEFAULT 'муж',
   `age` int(3) NOT NULL,
   `passport` varchar(255) NOT NULL,
+  `foto` varchar(255) DEFAULT '',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 

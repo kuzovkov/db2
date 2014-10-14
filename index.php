@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="ru">
   <head>
@@ -95,5 +97,25 @@
     <script type="text/javascript" src="js/jquery.ui.timepicker.js"></script>
     <script type="text/javascript" src="js/jquery-ui.1.10.4.js"></script>
     <script src="js/app.js"></script>
+    
+    
+    <?php if (isset($_GET['from']) && $_GET['from'] == 'edit'): ?>
+        <script type="text/javascript">
+            $(document).ready(function(){
+                $('#data').load('modules/passenger_edit_form.php',{
+                    <?php $count = 0; foreach( $_GET as $key => $val ):?>
+                        <?=$key.':'."'".$val."'"?>
+                        <?=(++$count < count($_GET))? ',': ''?>
+                    <?php endforeach;?>
+                });
+                
+                
+            });
+            
+        </script>
+    <?php else: ?>
+        <script type="text/javascript">switchMenu('flight');</script>
+    <?php endif; ?>
+    
   </body>
 </html>
