@@ -6,7 +6,26 @@ $trend1 = ( isset( $_POST['trend1'] ) )? $_POST['trend1'] : 'ASC';
 $trend2 = ( isset( $_POST['trend2'] ) )? $_POST['trend2'] : 'ASC';
 $field2 = ( isset($_POST['field2']))? $_POST['field2'] : 'id';
 $field1 = ( isset($_POST['field1']))? $_POST['field1'] : 'id';
-$sql = "SELECT * from passenger ORDER BY $field1 $trend1";
+$search = ( isset($_POST['search']) && $_POST['search'] === 'true' )? true : false;
+$filter1 = ( isset($_POST['filter1']))? $_POST['filter1'] : false;
+$filter2 = ( isset($_POST['filter2']))? $_POST['filter2'] : false;
+
+if ( $search && $filter1 && $filter2 )
+{
+    $sql = "SELECT * from passenger WHERE name LIKE '%". trim($filter1) . "%' AND lastname LIKE '%" . trim($filter2) ."%' ORDER BY ". $field1 . " " . $trend1;
+}
+elseif ( $search && $filter1 && !$filter2 )
+{
+    $sql = "SELECT * from passenger WHERE name LIKE '%". trim($filter1) . "%'  ORDER BY ". $field1 . " " . $trend1;
+}
+elseif ( $search && !$filter1 && $filter2 )
+{
+    $sql = "SELECT * from passenger WHERE lastname LIKE '%" . trim($filter2) ."%' ORDER BY ". $field1 . " " . $trend1;
+}
+else
+{
+    $sql = "SELECT * from passenger ORDER BY ". $field1 . " " . $trend1;
+}
 $array1 = dbGetQueryResult($sql);
 
 ?>
@@ -44,6 +63,8 @@ $array1 = dbGetQueryResult($sql);
     var trend2 = '<?=$trend2?>';
     var field1 = '<?=$field1?>';
     var field2 = '<?=$field2?>';
+    var rowId = '<?=$id?>';
+    var search = <?php if($search): ?>true<?php else: ?>false<?php endif;?>;
     $(document).ready(function(){
         $('#passenger-table tr:first td').each(function(){
             $('li#'+$(this).attr('key')).width($(this).innerWidth()-2).height(80);
@@ -55,7 +76,7 @@ $array1 = dbGetQueryResult($sql);
     });
     
 </script>
-<script type="text/javascript" src="js/passenger.js"></script>
+
 
 <?php 
     
@@ -88,6 +109,7 @@ $array1 = dbGetQueryResult($sql);
 </table>
 <h3>Фотография</h3>
 <?php 
+    $foto = '';
     foreach($array1 as $row1) if ( $row1['id'] == $id ) $foto = $row1['foto'];
     $src = ($foto != '')? 'thumbnail.80.'.$foto : 'default.gif';
 ?>
@@ -97,11 +119,13 @@ $array1 = dbGetQueryResult($sql);
 <tr>
 <td>
 <label>Имя</label>&nbsp;
-<input type="text" id="filter-point-dep" value="<?=(isset($_POST['filter1']))? $_POST['filter1']: ''?>" size="50"/>&nbsp;&nbsp;
+<input type="text" id="filter1" value="<?=(isset($_POST['filter1']))? $_POST['filter1']: ''?>" size="50"/>&nbsp;&nbsp;
 <label>Фамилия</label>&nbsp;
-<input type="text" id="filter-point-arr" value="<?=(isset($_POST['filter2']))? $_POST['filter2']: ''?>" size="50"/>&nbsp;&nbsp;
+<input type="text" id="filter2" value="<?=(isset($_POST['filter2']))? $_POST['filter2']: ''?>" size="50"/>&nbsp;&nbsp;
 <label>Включить фильтр</label>&nbsp;
-<input type="checkbox" id="filter" <?php if($_POST['search']):?>checked="checked"/><?php endif;?>
+ 
+<input type="checkbox" id="filter" <?php if($search):?>checked="checked"<?php endif;?>/>
 </td>
 </tr>
 </table>
+<script type="text/javascript" src="js/passenger.js"></script>
