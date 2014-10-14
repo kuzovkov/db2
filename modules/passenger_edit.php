@@ -1,5 +1,6 @@
 <?php
 require_once('common.inc.php');
+require_once('ImgUpload.php');
 
 $id = ( isset( $_POST['id']) )? $_POST['id'] : 0;
 $currRow = null;
@@ -9,10 +10,15 @@ $field1 = ( isset($_POST['field1']))? $_POST['field1'] : 'id';
 /*delete*/
 if ( isset($_POST['del']) )
 {
+    $sql = "SELECT foto FROM passenger WHERE id=".$_POST['del'];
+    $array = dbGetQueryResult($sql);
+    $foto = $array[0]['foto'];
+    ImgUpload::deleteImage(array('foto'=>$foto, 'id'=>$_POST['del']));
     $sql = 'DELETE FROM passenger WHERE id='.$_POST['del'];
     dbQuery($sql);
     $sql = 'DELETE FROM ticket WHERE passenger='.$_POST['del'];
     dbQuery($sql);
+    
 }
 
 /*add*/
@@ -80,6 +86,14 @@ $array1 = dbGetQueryResult($sql);
 </td>
 </tr>
 </table>
+<h3>Фотография</h3>
+<?php 
+    foreach($array1 as $row1) if ( $row1['id'] == $id ) $foto = $row1['foto'];
+    $src = ($foto != '')? 'thumbnail.80.'.$foto : 'default.gif';
+?>
+
+<img class="foto" src="img/foto/<?=$src?>"/>
+
 <script type="text/javascript" src="js/passenger_edit.js"></script>
 <script type="text/javascript" src="js/confirm.js"></script>
 <script type="text/javascript">

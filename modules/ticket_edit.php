@@ -100,6 +100,13 @@ $array1 = dbGetQueryResult($sql);
 
 </table>
 </div>
+<h3>Фотография</h3>
+<?php 
+    foreach($array1 as $row1) if ( $row1['id'] == $idPassenger ) $foto = $row1['foto'];
+    $src = ($foto != '')? 'thumbnail.80.'.$foto : 'default.gif';
+?>
+
+<img class="foto" src="img/foto/<?=$src?>"/>
 </td>
 <?php 
     $sql = "SELECT ticket.id,ticket.date_dep,flight.time_dep,flight.time_arr,flight.point_dep, flight.point_arr FROM ticket, flight WHERE ticket.passenger=$idPassenger AND ticket.flight_id=flight.id ORDER BY $field2 $trend2";
