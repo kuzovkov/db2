@@ -43,7 +43,11 @@ $array1 = dbGetQueryResult($sql);
 
 <div class="wrap-table-div">
 <table id="passenger-table" class="table table-bordered table-hover">
-
+<?php 
+    $present = false; 
+    foreach ( $array1 as $row1 ) if( $id == $row1['id']) $present = true;
+    if (!$present) $id = 0;    
+?>
 <?php foreach ( $array1 as $row1 ): if ( $id == 0 ) $id = $row1['id'];?>
     <tr <?php if($row1['id'] == $id) echo 'class="active tbody"'; else echo 'class="tbody"';?> id="<?=$row1['id']?>">
     
@@ -118,6 +122,7 @@ $array1 = dbGetQueryResult($sql);
 <table class="table">
 <tr>
 <td>
+<h3>Фильтр</h3>
 <label>Имя</label>&nbsp;
 <input type="text" id="filter1" value="<?=(isset($_POST['filter1']))? $_POST['filter1']: ''?>" size="50"/>&nbsp;&nbsp;
 <label>Фамилия</label>&nbsp;

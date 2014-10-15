@@ -45,7 +45,11 @@ $array1 = dbGetQueryResult($sql);
 <div class="wrap-table-div">
 
 <table id="flight-table" class="table table-bordered table-hover">
-
+<?php 
+    $present = false; 
+    foreach ( $array1 as $row1 ) if( $id == $row1['id']) $present = true;
+    if (!$present) $id = 0;    
+?>
 <?php foreach ( $array1 as $row1 ): if ( $id == 0 ) $id = $row1['id'];?>
     <tr <?php if($row1['id'] == $id) echo 'class="tbody active"'; else echo 'class="tbody"';?> id="<?=$row1['id']?>">
     <?php foreach ( $row1 as $key => $col ): ?>
@@ -110,6 +114,7 @@ $array1 = dbGetQueryResult($sql);
 <table class="table">
 <tr>
 <td>
+<h3>Фильтр</h3>
 <label>Пункт вылета</label>&nbsp;
 <input type="text" id="filter1" value="<?=(isset($_POST['filter1']))? $_POST['filter1']: ''?>" size="50"/>&nbsp;&nbsp;
 <label>Пункт прилета</label>&nbsp;

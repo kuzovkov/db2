@@ -5,7 +5,9 @@ $id = ( isset( $_POST['id']) )? $_POST['id'] : 0;
 $currRow = null;
 $trend1 = ( isset( $_POST['trend1'] ) )? $_POST['trend1'] : 'ASC';
 $field1 = ( isset($_POST['field1']))? $_POST['field1'] : 'id';
-
+$search = ( isset($_POST['search']) && $_POST['search'] === 'true' )? true : false;
+$filter1 = ( isset($_POST['filter1']))? $_POST['filter1'] : false;
+$filter2 = ( isset($_POST['filter2']))? $_POST['filter2'] : false;
 
 /*delete*/
 if ( isset($_POST['del']) )
@@ -42,7 +44,23 @@ if ( isset($_POST['update']) )
     dbQuery($sql);
 }
 
-$sql = 'SELECT * from flight ORDER BY '. $field1 . ' ' . $trend1;
+if ( $search && $filter1 && $filter2 )
+{
+    $sql = "SELECT * from flight WHERE point_dep LIKE '%". trim($filter1) . "%' AND point_arr LIKE '%" . trim($filter2) ."%' ORDER BY ". $field1 . " " . $trend1;
+}
+elseif ( $search && $filter1 && !$filter2 )
+{
+    $sql = "SELECT * from flight WHERE point_dep LIKE '%". trim($filter1) . "%'  ORDER BY ". $field1 . " " . $trend1;
+}
+elseif ( $search && !$filter1 && $filter2 )
+{
+    $sql = "SELECT * from flight WHERE point_arr LIKE '%" . trim($filter2) ."%' ORDER BY ". $field1 . " " . $trend1;
+}
+else
+{
+    $sql = "SELECT * from flight ORDER BY ". $field1 . " " . $trend1;
+}
+
 $array1 = dbGetQueryResult($sql);
 
 ?>
@@ -59,7 +77,11 @@ $array1 = dbGetQueryResult($sql);
 </ul>
 <div class="wrap-table-div">
 <table id="flight-edit-table" class="table table-bordered table-hover">
-
+<?php 
+    $present = false; 
+    foreach ( $array1 as $row1 ) if( $id == $row1['id']) $present = true;
+    if (!$present) $id = 0;    
+?>
 <?php foreach ( $array1 as $row1 ): if ( $id == 0 ) $id = $row1['id'];?>
     <tr <?php if($row1['id'] == $id) { echo 'class="active tbody"'; $currRow = $row1; }else{echo 'class="tbody"';}?> id="<?=$row1['id']?>">
     <?php foreach ( $row1 as $key => $col ): ?>
@@ -79,12 +101,26 @@ $array1 = dbGetQueryResult($sql);
 </td>
 </tr>
 </table>
-<script type="text/javascript" src="js/flight_edit.js"></script>
-<script type="text/javascript" src="js/confirm.js"></script>
+<table class="table">
+<tr>
+<td>
+<h3>Фильтр</h3>
+<label>Пункт вылета</label>&nbsp;
+<input type="text" id="filter1" value="<?=(isset($_POST['filter1']))? $_POST['filter1']: ''?>" size="50"/>&nbsp;&nbsp;
+<label>Пункт прилета</label>&nbsp;
+<input type="text" id="filter2" value="<?=(isset($_POST['filter2']))? $_POST['filter2']: ''?>" size="50"/>&nbsp;&nbsp;
+<label>Включить фильтр</label>&nbsp;
+ 
+<input type="checkbox" id="filter" <?php if($search):?>checked="checked"<?php endif;?>/>
+</td>
+</tr>
+</table>
+
 <script type="text/javascript">
     var trend1 = '<?=$trend1?>';
     var field1 = '<?=$field1?>';
-   
+    var rowId = '<?=$id?>';
+    var search = <?php if($search): ?>true<?php else: ?>false<?php endif;?>;
     $('#btn-flight-edit').click(function(){
         $('#data').load('modules/flight_edit_form.php',{
             <?php foreach( $currRow as $key => $val ):?>
@@ -100,3 +136,5 @@ $array1 = dbGetQueryResult($sql);
     
 
 </script>
+<script type="text/javascript" src="js/flight_edit.js"></script>
+<script type="text/javascript" src="js/confirm.js"></script>
