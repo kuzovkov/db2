@@ -6,9 +6,12 @@
     $trend1 = ( isset( $_POST['trend1'] ) )? $_POST['trend1'] : 'ASC';
     $field1 = ( isset($_POST['field1']))? $_POST['field1'] : 'id';
     $date_dep = ( isset($_POST['date_dep']))? $_POST['date_dep'] : ''; 
+    $search = ( isset($_POST['search']) && $_POST['search'] === 'true' )? true : false;
+    $filter1 = ( isset($_POST['filter1']))? $_POST['filter1'] : false;
+    $filter2 = ( isset($_POST['filter2']))? $_POST['filter2'] : false;
+    
     $sql = 'SELECT * from passenger WHERE id='.$idPassenger;
     $array1 = dbGetQueryResult($sql);
-   
     
 ?>
 <table class="table">
@@ -57,7 +60,23 @@
 </td>
 
 <?php
-    $sql = "SELECT * FROM flight ORDER BY $field1 $trend1";
+    if ( $search && $filter1 && $filter2 )
+    {
+        $sql = "SELECT * from flight WHERE point_dep LIKE '%". trim($filter1) . "%' AND point_arr LIKE '%" . trim($filter2) ."%' ORDER BY ". $field1 . " " . $trend1;
+    }
+    elseif ( $search && $filter1 && !$filter2 )
+    {
+        $sql = "SELECT * from flight WHERE point_dep LIKE '%". trim($filter1) . "%'  ORDER BY ". $field1 . " " . $trend1;
+    }
+    elseif ( $search && !$filter1 && $filter2 )
+    {
+        $sql = "SELECT * from flight WHERE point_arr LIKE '%" . trim($filter2) ."%' ORDER BY ". $field1 . " " . $trend1;
+    }
+    else
+    {
+        $sql = "SELECT * from flight ORDER BY ". $field1 . " " . $trend1;
+    }
+    
     $array2 = dbGetQueryResult($sql);
 ?>
 <td>
@@ -71,6 +90,11 @@
 <div class="wrap-table-div">
 <table id="ticket-flight-table" class="table table-bordered table-striped">
 
+<?php 
+    $present = false; 
+    foreach ( $array2 as $row2 ) if( $idFlight == $row2['id']) $present = true;
+    if (!$present) $idFlight = 0;    
+?>
 <?php foreach ( $array2 as $row2 ): if ( $idFlight == 0 ) $idFlight = $row2['id'];?>
     <tr <?php if($row2['id'] == $idFlight) echo 'class="active"';?> id="<?=$row2['id']?>">
     <?php foreach ( $row2 as $key => $col ): ?>
@@ -82,6 +106,20 @@
 </table>
 </div>
 
+</td>
+</tr>
+</table>
+<table class="table">
+<tr>
+<td>
+<h3>Фильтр</h3>
+<label>Пункт вылета</label>&nbsp;
+<input type="text" id="filter1" value="<?=(isset($_POST['filter1']))? $_POST['filter1']: ''?>" size="50"/>&nbsp;&nbsp;
+<label>Пункт прилета</label>&nbsp;
+<input type="text" id="filter2" value="<?=(isset($_POST['filter2']))? $_POST['filter2']: ''?>" size="50"/>&nbsp;&nbsp;
+<label>Включить фильтр</label>&nbsp;
+ 
+<input type="checkbox" id="filter" <?php if($search):?>checked="checked"<?php endif;?>/>
 </td>
 </tr>
 </table>
@@ -100,11 +138,14 @@
     var trend1 = '<?=$trend1?>';
     var field1 = '<?=$field1?>';
     var date_dep = '<?=$date_dep?>';
-
+    var search = <?php if($search): ?>true<?php else: ?>false<?php endif;?>;
+    var args = {idFlight:idFlight,field1:field1, trend1:trend1, idPassenger:<?=$idPassenger?>,date_dep:date_dep};
+    
+    
     $('#ticket-flight-table tr').click(function(){
-        idFlight = this.id;
-        date_dep = $('#ticket-add-date').val();
-        $('#data').load('modules/ticket_edit_form.php',{idFlight:idFlight,field1:field1, trend1:trend1, idPassenger:<?=$idPassenger?>,date_dep:date_dep});
+        args.idFlight = this.id;
+        args.date_dep = $('#ticket-add-date').val();
+        reloadPage();
     });
     
     $('#btn-ticket-add').click(function(){
@@ -157,10 +198,34 @@
     });
     
     $('ul#head-flight li').click(function(){
-        trend1 = ( trend1 == 'ASC' )? 'DESC' : 'ASC';
-        field1 = this.id;
-        date_dep = $('#ticket-add-date').val();
-        $('#data').load('modules/ticket_edit_form.php',{idFlight:idFlight, field1:field1, trend1:trend1, idPassenger:<?=$idPassenger?>,date_dep:date_dep });
+        args.trend1 = ( args.trend1 == 'ASC' )? 'DESC' : 'ASC';
+        args.field1 = this.id;
+        args.date_dep = $('#ticket-add-date').val();
+        reloadPage();
+    });
+    
+    $('#filter').change(function(){
+        search = ($(this).prop('checked'))? true:false;
+        reloadPage();    
+    });
+
+    $('#filter1').change(function(){
+        search = ($('#filter').prop('checked'))? true:false;
+        if ( search ) reloadPage(); 
         
-    }); 
+    });
+    
+    $('#filter2').change(function(){
+        search = ($('#filter').prop('checked'))? true:false;
+        if ( search ) reloadPage(); 
+    });
+    
+    function reloadPage(){
+        
+        args.filter1 = $('#filter1').val();
+        args.filter2 = $('#filter2').val();
+        args.search = search; 
+       
+        $('#data').load('modules/ticket_edit_form.php',args);
+    } 
 </script>

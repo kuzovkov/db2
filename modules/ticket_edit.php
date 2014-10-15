@@ -49,6 +49,9 @@ $trend1 = ( isset( $_POST['trend1'] ) )? $_POST['trend1'] : 'ASC';
 $field1 = ( isset($_POST['field1']))? $_POST['field1'] : 'id';
 $trend2 = ( isset( $_POST['trend2'] ) )? $_POST['trend2'] : 'ASC';
 $field2 = ( isset($_POST['field2']))? $_POST['field2'] : 'id';
+$search = ( isset($_POST['search']) && $_POST['search'] === 'true' )? true : false;
+$filter1 = ( isset($_POST['filter1']))? $_POST['filter1'] : false;
+$filter2 = ( isset($_POST['filter2']))? $_POST['filter2'] : false;
 
 
 /*delete*/
@@ -70,7 +73,23 @@ if ( isset( $_POST['add']) )
     dbQuery($sql);
 }
 
-$sql = "SELECT * from passenger ORDER BY $field1 $trend1";
+if ( $search && $filter1 && $filter2 )
+{
+    $sql = "SELECT * from passenger WHERE name LIKE '%". trim($filter1) . "%' AND lastname LIKE '%" . trim($filter2) ."%' ORDER BY ". $field1 . " " . $trend1;
+}
+elseif ( $search && $filter1 && !$filter2 )
+{
+    $sql = "SELECT * from passenger WHERE name LIKE '%". trim($filter1) . "%'  ORDER BY ". $field1 . " " . $trend1;
+}
+elseif ( $search && !$filter1 && $filter2 )
+{
+    $sql = "SELECT * from passenger WHERE lastname LIKE '%" . trim($filter2) ."%' ORDER BY ". $field1 . " " . $trend1;
+}
+else
+{
+    $sql = "SELECT * from passenger ORDER BY ". $field1 . " " . $trend1;
+}
+
 $array1 = dbGetQueryResult($sql);
 
 ?>
@@ -89,7 +108,11 @@ $array1 = dbGetQueryResult($sql);
 </ul>
 <div class="wrap-table-div">
 <table id="passenger-ticket-table" class="table table-bordered table-hover">
-
+<?php 
+    $present = false; 
+    foreach ( $array1 as $row1 ) if( $idPassenger == $row1['id']) $present = true;
+    if (!$present) $idPassenger = 0;    
+?>
 <?php foreach ( $array1 as $row1 ): if ( $idPassenger == 0 ) $idPassenger = $row1['id'];?>
     <tr <?php if($row1['id'] == $idPassenger) { echo 'class="active"'; $currRow = $row1; }?> id="<?=$row1['id']?>">
     <?php foreach ( $row1 as $key => $col ): ?>
@@ -124,7 +147,11 @@ $array1 = dbGetQueryResult($sql);
 </ul>
 <div class="wrap-table-div">
 <table id="ticket-edit-table" class="table table-bordered table-striped">
-
+<?php 
+    $present = false; 
+    foreach ( $array2 as $row2 ) if( $idTicket == $row2['id']) $present = true;
+    if (!$present) $idTicket = 0;    
+?>
 <?php foreach ( $array2 as $row2 ): if ( $idTicket == 0 ) $idTicket = $row2['id'];?>
     <tr <?php if($row2['id'] == $idTicket)  echo 'class="active"';?> id="<?=$row2['id']?>">
     <?php foreach ( $row2 as $key => $col ): ?>
@@ -145,6 +172,20 @@ $array1 = dbGetQueryResult($sql);
 </td>
 </tr>
 </table>
+<table class="table">
+<tr>
+<td>
+<h3>Фильтр</h3>
+<label>Имя</label>&nbsp;
+<input type="text" id="filter1" value="<?=(isset($_POST['filter1']))? $_POST['filter1']: ''?>" size="50"/>&nbsp;&nbsp;
+<label>Фамилия</label>&nbsp;
+<input type="text" id="filter2" value="<?=(isset($_POST['filter2']))? $_POST['filter2']: ''?>" size="50"/>&nbsp;&nbsp;
+<label>Включить фильтр</label>&nbsp;
+ 
+<input type="checkbox" id="filter" <?php if($search):?>checked="checked"<?php endif;?>/>
+</td>
+</tr>
+</table>
 <script type="text/javascript" src="js/confirm.js"></script>
 <script type="text/javascript">
     var activePassenger = $('#passenger-ticket-table tr.active');
@@ -158,17 +199,19 @@ $array1 = dbGetQueryResult($sql);
     var field2 = '<?=$field2?>';
     var idTicket = '<?=$idTicket?>';
     var idPassenger = '<?=$idPassenger?>';
+    var search = <?php if($search): ?>true<?php else: ?>false<?php endif;?>;
+    var args = {idTicket:idTicket,idPassenger:idPassenger,field1:field1, field2:field2,trend1:trend1,trend2:trend2};
     
     $('#passenger-ticket-table tr').click(function(){
-        idPassenger = this.id;
-        idTicket = 0;
-        $('#data').load('modules/ticket_edit.php',{idTicket:idTicket,idPassenger:idPassenger,field1:field1, field2:field2,trend1:trend1,trend2:trend2});
+        args.idPassenger = this.id;
+        args.idTicket = 0;
+       reloadPage();
     });
     
     
     $('#ticket-edit-table tr').click(function(){
-        idTicket = this.id;
-        $('#data').load('modules/ticket_edit.php',{idTicket:idTicket,idPassenger:idPassenger,field1:field1, field2:field2,trend1:trend1,trend2:trend2});
+        args.idTicket = this.id;
+        reloadPage();
     });
     
     $('#btn-ticket-del').click(function(){
@@ -219,18 +262,42 @@ $array1 = dbGetQueryResult($sql);
     });
     
     $('ul#head-flight li').click(function(){
-        trend2 = ( trend2 == 'ASC' )? 'DESC' : 'ASC';
-        field2 = this.id;
-        $('#data').load('modules/ticket_edit.php',{id:id, field1:field1, field2:field2,trend1:trend1,trend2:trend2, idTicket:idTicket, idPassenger:idPassenger});
+        args.trend2 = ( args.trend2 == 'ASC' )? 'DESC' : 'ASC';
+        args.field2 = this.id;
+        reloadPage();
         
     });
     
     $('ul#head-passenger li').click(function(){
-    trend1 = ( trend1 == 'ASC' )? 'DESC' : 'ASC';
-    field1 = this.id;
-    $('#data').load('modules/ticket_edit.php',{id:id, field1:field1, field2:field2,trend1:trend1,trend2:trend2, idTicket:idTicket, idPassenger:idPassenger});
+        args.trend1 = ( args.trend1 == 'ASC' )? 'DESC' : 'ASC';
+        args.field1 = this.id;
+        reloadPage();
+    });
     
-}); 
+    $('#filter').change(function(){
+        search = ($(this).prop('checked'))? true:false;
+        reloadPage();    
+    });
+    
+    $('#filter1').change(function(){
+        search = ($('#filter').prop('checked'))? true:false;
+        if ( search ) reloadPage(); 
+        
+    });
+    
+    $('#filter2').change(function(){
+        search = ($('#filter').prop('checked'))? true:false;
+        if ( search ) reloadPage(); 
+    });
+    
+    function reloadPage(){
+        
+        args.filter1 = $('#filter1').val();
+        args.filter2 = $('#filter2').val();
+        args.search = search; 
+       
+        $('#data').load('modules/ticket_edit.php',args);
+    } 
     
 </script>
 
