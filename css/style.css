@@ -139,3 +139,9 @@ td.show img
     z-index: 2;
 }
 
+@media print
+{
+    ul, button, label, input, img { display: none;}
+    .no-print{display: none;}
+    .wrap-table-div{ width: 100%; height: 100%; overflow: visible;}
+}

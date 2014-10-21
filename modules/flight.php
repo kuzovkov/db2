@@ -86,7 +86,7 @@ $array1 = dbGetQueryResult($sql);
    $array2 = dbGetQueryResult($sql);
 ?>
 <td>
-<h3>Билеты</h3>
+<h3 class="no-print">Билеты</h3>
 <ul class="head" id="head-ticket">
     <li id="date_dep">Дата вылета</li>
     <li id="name">Имя</li>
@@ -96,7 +96,7 @@ $array1 = dbGetQueryResult($sql);
     <li id="passport">Паспорт</li>
 </ul>
 <div class="wrap-table-div">
-<table id="ticket-table" class="table table-bordered">
+<table id="ticket-table" class="table table-bordered no-print">
 
 <?php foreach ( $array2 as $row2 ): ?>
     <tr class="tbody">
@@ -114,7 +114,7 @@ $array1 = dbGetQueryResult($sql);
 <table class="table">
 <tr>
 <td>
-<h3>Фильтр</h3>
+<h3 class="no-print">Фильтр</h3>
 <label>Пункт вылета</label>&nbsp;
 <input type="text" id="filter1" value="<?=(isset($_POST['filter1']))? $_POST['filter1']: ''?>" size="50"/>&nbsp;&nbsp;
 <label>Пункт прилета</label>&nbsp;
@@ -125,4 +125,11 @@ $array1 = dbGetQueryResult($sql);
 </td>
 </tr>
 </table>
+<button id="print">Печать</button>
+<script type="text/javascript">
+    $('#print').click(function(){
+        var text = $('#flight-table');
+        window.print(text);
+    });
+</script>
 <script type="text/javascript" src="js/flight.js"></script>

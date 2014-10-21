@@ -88,7 +88,7 @@ $array1 = dbGetQueryResult($sql);
     $array2 = dbGetQueryResult($sql);
 ?>
 <td>
-<h3>Билеты</h3>
+<h3 class="no-print">Билеты</h3>
 <ul class="head" id="head-ticket">
     <li id="date_dep">Дата вылета</li>
     <li id="time_dep">Время вылета</li>
@@ -97,7 +97,7 @@ $array1 = dbGetQueryResult($sql);
     <li id="point_arr">Пункт назначения</li>
 </ul>
 <div class="wrap-table-div">
-<table id="ticket-table" class="table table-bordered">
+<table id="ticket-table" class="table table-bordered no-print">
 
 <?php foreach ( $array2 as $row2 ): ?>
     <tr>
@@ -111,7 +111,7 @@ $array1 = dbGetQueryResult($sql);
 </td>
 </tr>
 </table>
-<h3>Фотография</h3>
+<h3 class="no-print">Фотография</h3>
 <?php 
     $foto = '';
     foreach($array1 as $row1) if ( $row1['id'] == $id ) $foto = $row1['foto'];
@@ -122,7 +122,7 @@ $array1 = dbGetQueryResult($sql);
 <table class="table">
 <tr>
 <td>
-<h3>Фильтр</h3>
+<h3 class="no-print">Фильтр</h3>
 <label>Имя</label>&nbsp;
 <input type="text" id="filter1" value="<?=(isset($_POST['filter1']))? $_POST['filter1']: ''?>" size="50"/>&nbsp;&nbsp;
 <label>Фамилия</label>&nbsp;
@@ -133,4 +133,11 @@ $array1 = dbGetQueryResult($sql);
 </td>
 </tr>
 </table>
+<button id="print">Печать</button>
+<script type="text/javascript">
+    $('#print').click(function(){
+        var text = $('#flight-table');
+        window.print(text);
+    });
+</script>
 <script type="text/javascript" src="js/passenger.js"></script>
